@@ -1,0 +1,327 @@
+---
+title: "TP2"
+output: html_document
+date: "2023-06-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library (datos)
+library(dplyr)
+library(ggplot2)
+library(summarytools)
+library(lessR)
+
+```
+
+
+
+## Introducción
+
+
+Los datos a analizar provienen de la Encuesta sobre Uso del tiempo, realizada en el 2016 por el Gobierno de la Ciudad de Buenas Aires (GCBA). Según la Dirección de estadísticas del GCBA, la encuesta tiene por objetivo producir información sobre el tiempo que las personas (mujeres y varones, jóvenes, personas mayores) que habitan en la Ciudad de Buenos Aires dedican cotidianamente a diferentes actividades, incluyendo el trabajo remunerado, las actividades domésticas, el cuidado de niños, niñas, personas mayores o con discapacidad, el estudio, el esparcimiento, los viajes y traslados, etc.
+El diseño muestral de la Encuesta es estratificado en tres etapas: En la primera etapa de muestreo se seleccionaron 300 (unidades primarias de muestreo) UPM con probabilidad de selección proporcional al tamaño, en este caso de las viviendas. En la segunda etapa, se seleccionaron de manera sistemática 15 viviendas en cada una de las UPM, totalizando una muestra de 4.500 viviendas. La última etapa consistió en la selección de un miembro del hogar de 14 o más años. Se contempla la existencia de 6 factores de expansión que No están en la base de microdatos disponible.
+
+Dificultades
+No encontré las variables para ponderar la base. Intenté crear una variable que capture lo que los hogares destinan a trabajo no pago (sin recreacion ni estudio), creo la variable pero no la reconce para luego graficar. Tampoco logré crear una variable que capture el promedio de horas que se destinan a diferentes actividades.
+
+
+
+
+Leo los datos y el encabezado de las variables
+
+```{r}
+
+
+uso_tiempo <- read.csv("datos/encuesta_uso_tiempo_2016.csv")
+
+
+
+```
+
+
+Se trata de una base organizada en 27 columnas de variables con 2.336 observaciones.Un grupo de variables socioeconomicas (edad, sexo ,estado ocupacional ,quintil de ingreso, etc)y otro grupo sobre actividades pagas o no pagas.
+
+```{r}
+
+head(uso_tiempo)
+
+```
+ Se realizan algunas estadisticas para conocer la base
+```{r}
+
+uso_tiempo |>
+ 
+freq( rango_etario)
+
+```
+Calculo el rango para las principales variables
+
+```{r}
+
+range(uso_tiempo$trabajo_pago)
+```
+```{r}
+
+range(uso_tiempo$trabajo_domestico_no_pago)
+
+
+```
+```{r}
+range(uso_tiempo$voluntariados)
+```
+```{r}
+range(uso_tiempo$tareas_cuidados)
+```
+```{r}
+range(uso_tiempo$aplicaciones)
+```
+```{r}
+range(uso_tiempo$recreacion)
+
+```
+Se observa que los limites superiores resultan extraños. El archivo metodológico explicaba que responde un miembro del hogar mayor a 14 años,por un integrante.
+Se descartó el análisis de las variables agrupando por hogar ya que existe una solo observación por hogar y por ende carece de sentido.
+También se descarto el análisis por quintil de ingreso dado que se observaban anomalías en la variable (la frecuencia de dicha variable arrojo un solo quintil para toda la muestra).
+
+
+# Hipótesis 1: Las mujeres dedican mayor cantidad de horas al trabajo no remunerado que los hombres.
+Para ver ello, se calcula la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Lo mismo para aquella actividades no remuneradas que sería: trabajo doméstico no remunerado, cuidados y voluntariado.
+
+
+```{r}
+uso_tiempo|>
+  group_by(sexo)|>
+
+summarise(mean(trabajo_pago),mean(trabajo_domestico_no_pago),mean(tareas_cuidados), mean(voluntariados) )
+   
+```
+ Se observa que la mujeres en general dedican en promedio mayor cantidad de horas a las actividades no remuneradas que los hombres. La mayor brecha se aprecia en el trabajo doméstico y la menor en voluntariados.
+ 
+Para obtener una medida resumen se calcula una variable (trabajo_no_pago) que agrupa las actividades no remuneradas listadas previamente(sin incluir cuidado personal, recreacion y estudio). 
+Luego, se calcula la proporción de horas dedicacadas a tareas no pagas o remuneradas según genero.
+
+```{r}
+horas_no_pago <- uso_tiempo %>% 
+  
+  mutate (horas_no_pago =(trabajo_domestico_no_pago+voluntariados+tareas_cuidados)) 
+
+```
+
+```{r}
+
+
+prop.table(table(horas_no_pago$sexo))
+
+```
+```{r}
+genero <- factor(c(rep("Hombre", 42.42), rep("Mujer", 57.57)))
+
+
+PieChart(genero, hole = 0, values = "%", data = genero,
+         
+         fill = c("green", "blue"), main = "") 
+
+```
+
+
+La proporción total de trabajo no remunerado según sexo,indicaría una mayor cantidad de horas no remuneradas brindadas por parte de las mujeres. Este indicador puede estar sesgado por la cantidad de hombre y mujeres de la muestra por esto se calcula también el valor medio de dicha cantidad de horas por sexo.
+calculo media de horas no remuneradas por sexo. Este indicador daría cuenta de que las mujeres en promedio dedicaron en el día de referencia poco más de 5 horas a tareas no remuneradas, mientras que los hombres dedicaron menos de 3 horas promedio.
+
+```{r}
+horas_no_pago |>
+  
+  
+ summarise(horas_no_pago_media =(mean(horas_no_pago, na.rm=TRUE)))
+
+```
+
+
+```{r}
+
+horas_no_pago |>
+  
+  group_by(sexo)|>
+  
+ summarise(horas_no_pago_media =(mean(horas_no_pago, na.rm=TRUE)))
+                                  
+
+```
+```{r}
+
+  
+ggplot(horas_no_pago, aes(sexo, mean(horas_no_pago))) +
+  geom_col(aes(color = mean(horas_no_pago)))  
+
+
+           
+
+```
+
+```{r}
+
+horas_no_pago|>
+  group_by(sexo)|>
+mutate(media_no_pago = mean(horas_no_pago, na.rm=TRUE))|>
+
+ggplot(aes(sexo, media_no_pago)) +
+  
+  geom_jitter(aes(color =sexo))+ 
+  
+  labs(title = paste0("Promedio de horas diarias de trabajo no remunerado según genero "))
+
+```
+Este último gráfico, pone de manifiesta la diferencia promedio en la cantidad de horas dedicadas a tareas no remuneradas según genero. Mientra que las mujeres hicieron hasta 6 horas promedio en el dia de referencia, los hombres no alnzan a 4 horas promedio.
+
+# Hipótesis 2. La condición laboral se relaciona con la cantidad de horas que un individuo puede dedicar a tareas no remuneradas. 
+
+Calculo la proporcion de mujeres y hombres de la muestra y la distribucion de condicion laboral de la muestra. 
+Para conocer la distribución de la muestra se calcula la proporción de hombre y mujeres según condición laboral.
+
+```{r}
+
+
+prop.table(table(uso_tiempo$sexo))
+
+```
+
+```{r}
+
+ 
+prop.table(table(uso_tiempo$estado_ocupacional))
+
+```
+```{r}
+ uso_tiempo|>
+  group_by(sexo)|>
+  freq(estado_ocupacional) 
+```
+
+
+Se observa que la proporción de mujeres es levamente mayor que la de hombres. 
+En cuanto a los ocupados, en el total la proporción es del 69%. Al cruzar estado ocupacional por sexo, se aprecia un porcentaje mayor de hombres ocupados, respecto de las mujeres. Mientras que son más las mujeres inactivas respecto de los hombres en terminos porcentuales, esto puede deberse a mayor esperanza de vida de las primeras.
+
+
+Se observa como se distribuyen las horas de trabajo según la condicion laboral
+
+
+```{r}
+uso_tiempo %>% 
+  group_by(estado_ocupacional) %>% 
+  summarise(horas_L_pago = mean(trabajo_pago, na.rm = TRUE))
+ 
+```
+
+
+```{r}
+  horas_no_pago|>  
+      group_by(estado_ocupacional) %>% 
+            summarise(horas_no_pago_media =(mean(horas_no_pago, na.rm=TRUE)))
+
+
+```
+La mayor cantidad promedio de tiempo pago se registra logicamente entre los ocupados.
+El trabajo doméstico y las tareas de cuidados son mayores entre los inactivos y los desocupados.
+En promedio una persona desocupaba destina poco más de 6 horas a tareas no remuneradas, cifra muy cercana a la que un ocupado destina a horas de trabajo remuneradas. De todos modos, la cantidad de horas no remuneradas que en promedio realiza una persona ocupada es cerca de 4 horas durante el día de referencia.
+
+A continuación se calcula las misma tabla filtrando por sexo.
+
+
+```{r}
+horas_no_pago|> 
+  filter(sexo=="Mujer")|>
+      group_by(estado_ocupacional) %>% 
+            summarise(horas_no_pago_media =(mean(horas_no_pago, na.rm=TRUE)))
+```
+
+```{r}
+horas_no_pago|> 
+  filter(sexo=="Varon")|>
+      group_by(estado_ocupacional) %>% 
+            summarise(horas_no_pago_media =(mean(horas_no_pago, na.rm=TRUE)))
+```
+
+Como se vio en la hipotesis 1,las mujeres destinan más tiempo a las actividades no remuneradas que los hombres, esto se sigue cumpliento cuando se analiza según condición laboral. Los inactivos y desocupados dedican en promedio más horas a tareas no remuneradas que los ocupados.  En particular las mujeres desocupadas o inactivas, dedican más tiempo que los hombres en igual condición laboral.Esto es válido también para la condición de "ocupados".
+
+
+
+# Hipotesis 3: Las personas más jovenes realizan menos actividades no remuneradas y más reacreativas o estudio.
+ 
+A continuación se calcula la media de tiempo dedicado a actividades de recreación, estudio/educación o uso de aplicaciones según edad.
+
+```{r}
+horas_no_pago %>% 
+  group_by(rango_etario) %>% 
+  summarise(media_no_pago = mean(horas_no_pago, na.rm = TRUE), horas_estudio = mean(estudio_educacion),horas_recreacion = mean(recreacion, na.rm = TRUE),horas_aplicaciones = mean(aplicaciones))
+
+```
+Los grupos poblacionales más jovenes (14-24 años) dedican más tiempo a actividades de recreación, aplicaciones y educación. Estas valores caen con los años, hasta llegar a los mayores de 65 quienes comienzan a dedicar más horas diarias a la recreación y al uso de aplicaciones (está última ya en los mayores de 50 comienza a incrementarse).
+En cuanto al trabajo no remunerado, definido por tareas domésticas, de cuidados y voluntariados; este es menor entre los más jovenes (14-24), y alcanza la mayor cantidad de horas promedio diarias entre los adultos de 50-64 años.
+
+En el siguiente gráfico. se observa el predominio de horas dedicadas a recreación en las edades jovenes, y como estas horas promedio descienden en las grupos etario. 
+
+```{r}
+uso_tiempo|>
+  group_by(rango_etario)|>
+mutate(media_recreacion = mean(recreacion, na.rm=TRUE))|>
+
+ggplot(aes(rango_etario, media_recreacion)) +
+  geom_jitter(aes(color =sexo)) +
+  
+ labs(title = paste0("Horas diarias promedio de recreación según edad y sexo "))
+
+```
+Se realiza el mismo gráfico para la variable uso de aplicaciones.Aquí se aprecia en primer lugar una menor tasa de respuesta, dado por la cantidad de puntos en el gráfico, y luego se ve claramente la diferencia de horas promedio de uso de aplicaciones según la edad de los individuos.
+
+```{r}
+uso_tiempo|>
+  group_by(rango_etario)|>
+mutate(media_aplicaciones = mean(aplicaciones, na.rm=TRUE))|>
+
+ggplot(aes(rango_etario, media_aplicaciones)) +
+  geom_jitter(aes(color =sexo))+ 
+  labs(title = paste0("Horas diarias promedio de uso aplicaciones según edad y sexo "))
+
+
+```
+Mismo gráfico para estudio. se observa el predominio de horas dedicadas a recreación en las edades jovenes, y co estas horas promedio descienden en las grupos etario. 
+
+```{r}
+uso_tiempo|>
+  group_by(rango_etario)|>
+mutate(media_estudio = mean(estudio_educacion, na.rm=TRUE))|>
+
+ggplot(aes(rango_etario, media_estudio)) +
+  geom_jitter(aes(color =sexo))+ 
+  labs(title = paste0("Horas diarias promedio de estudio según edad y sexo "))
+
+
+```
+
+
+VER SI VAN
+Gráfico.Tareas de cuidado por sexo y edad. se observa que son más la mujeres que realizan tareas de cuidados en especial entre  las mujeres de 25 a 49
+
+```{r}
+
+ggplot(uso_tiempo, aes(rango_etario, tareas_cuidados)) +
+  geom_jitter(aes(color =sexo))+
+  labs(title = paste0("Horas diarias promedio dedicadas a tareas de cuidado según edad y sexo "))
+
+
+```
+
+
+
+
+
+Educación según sexo 
+
+```{r}
+
+uso_tiempo |>
+  group_by(sexo) |>
+freq( nivel_educativo)
+
+```
