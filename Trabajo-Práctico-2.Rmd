@@ -76,11 +76,7 @@ Gráfico la frecuencia de las edades.
 ```{r}
 
 
-edad <- factor(c(rep("14-24", 12.46), rep("25-39", 28.77), rep("40-49", 13.14), rep("50-64", 22.30), rep("65+", 23.33)))
-
-
-PieChart(edad, hole = 0, values = "%", data = edad,
-         
+PieChart(rango_etario, data = uso_tiempo, hole = 0, values = "%", ,      
          fill = c("green", "blue", "red", "violet","orange"), main = "Distribución % de grupos etarios") 
 
 ```
@@ -91,7 +87,7 @@ PieChart(edad, hole = 0, values = "%", data = edad,
 Rango para trabajo pago.
 
 ```{r}
-rango_trabajo_pago <- range (uso_tiempo$trabajo_pago, na.rm = TRUE)
+rango_trabajo_pago <- range (uso_tiempo$trabajo_pago2, na.rm = TRUE)
 
 ```
  
@@ -101,7 +97,7 @@ La variable trabajo pago, que indica la cantidad de horas diarias dedicadas a ta
 Rango para trabajo doméstico no pago.
 ```{r}
 
-Rango_domestico_no_pago <- range(uso_tiempo$trabajo_domestico_no_pago)
+Rango_domestico_no_pago <- range(uso_tiempo$trabajo_domestico_no_pago2)
 
 ```
 
@@ -109,7 +105,7 @@ La variable tareas domésticas no pagas, que indica la cantidad de horas diarias
 
 
 ```{r}
-rango_voluntariado <- range(uso_tiempo$voluntariados)
+rango_voluntariado <- range(uso_tiempo$voluntariados2)
 
 ```
 
@@ -119,7 +115,7 @@ La variable voluntariado, que indica la cantidad de horas diarias dedicadas a ta
 Rango para tareas de cuidados
 
 ```{r}
-rango_cuidados <- range(uso_tiempo$tareas_cuidados)
+rango_cuidados <- range(uso_tiempo$tareas_cuidados2)
 ```
 
 La variable cuidados, que indica la cantidad de horas diarias dedicadas a tareas de cuidados de familiares  toma valores entre  `r rango_cuidados [1]` y `r rango_cuidados [2]`.
@@ -127,7 +123,7 @@ La variable cuidados, que indica la cantidad de horas diarias dedicadas a tareas
 Rango para tareas uso de aplicaciones
 
 ```{r}
-rango_aplicaciones <- range(uso_tiempo$aplicaciones)
+rango_aplicaciones <- range(uso_tiempo$aplicaciones2)
 
 ```
 
@@ -137,14 +133,14 @@ La variable aplicaciones, que denota la cantidad de horas diarias dedicadas al u
 Rango para tareas tiempo de recreación 
 
 ```{r}
-rango_recreacion <- range(uso_tiempo$recreacion)
+rango_recreacion <- range(uso_tiempo$recreacion2)
 
 ```
 
 La variable recreación, expresa la cantidad de horas diarias dedicadas al ocio y recreación,  toma valores entre  `r rango_recreacion [1]` y `r rango_recreacion [2]`. 
 
 
-Se observa que los limites superiores resultan extraños, si están expresado en minutos. 
+Se observa el limite superior máximo se registra en lo referido a tareas remuneradas, el resto de las tareas presentan limites similares.
 
 
 
@@ -171,12 +167,13 @@ Gráfico la proporción de hombres y mujeres en la muestra.
 ```{r}
 #| fig.cap = "Elaboración propia en base a datos de la Encuesta sobre Uso del Tiempo, Dirección de Estadisticas y Censos, GCBS"
 
-genero <- factor(c(rep("Hombre", 42.42), rep("Mujer", 57.57)))
+PieChart(sexo, data = uso_tiempo, hole = 0, values = "%", ,      
+         fill = c("blue", "violet","orange"), main = "Distribución porcentual según sexo") 
 
 
-PieChart(genero, hole = 0, values = "%", data = genero,
-         
-         fill = c("green", "blue"), main = "Distribución porcentual según sexo") 
+
+
+
 ```
 **Calculo la frecuencia del nivel educativo**.
 
@@ -212,7 +209,7 @@ Para ver ello, se calcula la cantidad media de tiempo dedicada al trabajo pago e
 uso_tiempo|>
   group_by(sexo)|>
 
-summarise(mean(trabajo_pago),mean(trabajo_domestico_no_pago),mean(tareas_cuidados), mean(voluntariados))|>
+summarise(mean(trabajo_pago2),mean(trabajo_domestico_no_pago2),mean(tareas_cuidados2), mean(voluntariados2))|>
    knitr::kable(caption = "Promedio de horas remuneradas y no remuneradas según sexo:", col.names = c("Sexo", "Trabajo remunerado", "Trabajo doméstico no pago", "Tareas de cuidados", "Voluntariados"))
    
 ```
@@ -223,7 +220,7 @@ Para obtener una medida resumen se calcula una variable (hs_no_pago) que agrupa 
 
 ```{r}
 horas_no_pago <- uso_tiempo %>% 
-  mutate (hs_no_pago =(trabajo_domestico_no_pago+voluntariados+tareas_cuidados)) 
+  mutate (hs_no_pago =(trabajo_domestico_no_pago2+voluntariados+tareas_cuidados2)) 
 
 ```
 
@@ -302,7 +299,7 @@ Se observa como se distribuyen las horas de trabajo según la condicion laboral.
 ```{r}
 uso_tiempo %>% 
   group_by(estado_ocupacional) %>% 
-  summarise(horas_L_pago = mean(trabajo_pago, na.rm = TRUE))|>
+  summarise(horas_L_pago = mean(trabajo_pago2, na.rm = TRUE))|>
   
 knitr::kable(caption = "Promedio de horas de trabajo remuneradas según estado ocupacional :", col.names = c("Estado ocupacional", "Promedio de horas"))
  
@@ -351,7 +348,7 @@ horas_no_pago|>
   group_by(sexo, estado_ocupacional)|>
   summarise(hs_no_pago = mean(hs_no_pago)) %>% 
   ggplot(aes(estado_ocupacional, hs_no_pago)) + 
-  geom_point(aes(color= sexo)) + 
+  geom_col(position = "dodge", aes(fill = sexo)) 
   
   labs(title = paste0("Promedio de horas diarias de trabajo no remunerado según genero y eatado ocupacional "))
 
@@ -374,7 +371,7 @@ A continuación se calcula la media de tiempo dedicado a actividades de recreaci
 ```{r}
 horas_no_pago %>% 
   group_by(rango_etario) %>% 
-  summarise(media_no_pago = mean(hs_no_pago, na.rm = TRUE), horas_estudio = mean(estudio_educacion),horas_recreacion = mean(recreacion, na.rm = TRUE),horas_aplicaciones = mean(aplicaciones), horas_pago = mean(trabajo_pago)) %>%
+  summarise(media_no_pago = mean(hs_no_pago, na.rm = TRUE), horas_estudio = mean(estudio_educacion2),horas_recreacion = mean(recreacion2, na.rm = TRUE),horas_aplicaciones = mean(aplicaciones2), horas_pago = mean(trabajo_pago2)) %>%
   knitr::kable(caption = "Promedio de horas de recreación o estudio según edad ", col.names = c("Edad agrupada ", "Horas de trabajo no remunerado", "Horas de estudio", "Horas de recreación", "Horas en aplicaciones","Horas de trabajo remunerado"))
 
 ```
@@ -390,12 +387,12 @@ En el siguiente gráfico, se observa el predominio de horas dedicadas a recreaci
 
 uso_tiempo|>
   group_by(rango_etario)|>
-  summarise(media_recreacion = mean(recreacion, na.rm=TRUE))|>
+  summarise(media_recreacion = mean(recreacion2, na.rm=TRUE))|>
   
   ggplot(aes(rango_etario, media_recreacion)) + 
   geom_col(aes(fill = rango_etario))+ 
 
-   labs(title = paste0("Horas diarias promedio de recreación según edad y sexo "))
+   labs(title = paste0("Horas diarias promedio de recreación según edad "))
 
 ```
 Se realiza el mismo gráfico para la variable uso de aplicaciones.Aquí se aprecia claramente la diferencia de horas promedio de uso de aplicaciones según la edad de los individuos, con un máximo en los mayores de 65 años (más de 3 horas promedio por día) y valores no muy dispares entre el grupo de 14 a 24 años y los adultos entre  50 y 64 años.
@@ -405,7 +402,7 @@ Se realiza el mismo gráfico para la variable uso de aplicaciones.Aquí se aprec
 
 uso_tiempo|>
   group_by(rango_etario)|>
-summarise(media_aplicaciones = mean(aplicaciones, na.rm=TRUE))|>
+summarise(media_aplicaciones = mean(aplicaciones2, na.rm=TRUE))|>
 ggplot(aes(rango_etario, media_aplicaciones)) + 
   geom_col(aes(fill = rango_etario))+ 
   
@@ -420,7 +417,7 @@ Mismo análisis para horas de estudio, indicaría un predominio de horas dedicad
 
 uso_tiempo|>
   group_by(rango_etario)|>
-summarise(media_estudio = mean(estudio_educacion, na.rm=TRUE))|>
+summarise(media_estudio = mean(estudio_educacion2, na.rm=TRUE))|>
 
 ggplot(aes(rango_etario, media_estudio)) +
   geom_col(aes(fill =rango_etario))+ 
