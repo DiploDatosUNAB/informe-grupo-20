@@ -167,7 +167,7 @@ Gráfico la proporción de hombres y mujeres en la muestra.
 ```{r}
 #| fig.cap = "Elaboración propia en base a datos de la Encuesta sobre Uso del Tiempo, Dirección de Estadisticas y Censos, GCBS"
 
-PieChart(sexo, data = uso_tiempo, hole = 0, values = "%", ,      
+PieChart(sexo, data = uso_tiempo, hole = 0, values = "%",     
          fill = c("blue", "violet","orange"), main = "Distribución porcentual según sexo") 
 
 
@@ -205,11 +205,11 @@ uso_tiempo|>
 Para ver ello, se calcula la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Lo mismo para aquella actividades no remuneradas realizadas. Para el segundo grupo se considerarón las siguientes variables:  trabajo doméstico no remunerado, cuidados y voluntariado.
 
 
+
 ```{r}
 uso_tiempo|>
   group_by(sexo)|>
-
-summarise(mean(trabajo_pago2),mean(trabajo_domestico_no_pago2),mean(tareas_cuidados2), mean(voluntariados2))|>
+summarise(mean(trabajo_pago2,na.rm=TRUE),mean(trabajo_domestico_no_pago2, na.rm=TRUE),mean(tareas_cuidados2,na.rm=TRUE), mean(voluntariados2, na.rm=TRUE))|>
    knitr::kable(caption = "Promedio de horas remuneradas y no remuneradas según sexo:", col.names = c("Sexo", "Trabajo remunerado", "Trabajo doméstico no pago", "Tareas de cuidados", "Voluntariados"))
    
 ```
@@ -220,9 +220,13 @@ Para obtener una medida resumen se calcula una variable (hs_no_pago) que agrupa 
 
 ```{r}
 horas_no_pago <- uso_tiempo %>% 
+
   mutate (hs_no_pago =(trabajo_domestico_no_pago2+voluntariados+tareas_cuidados2)) 
 
 ```
+
+
+
 
 Luego, se calcula la cantidad media de horas dedicacadas a tareas no remuneradas según genero.
 
@@ -230,9 +234,9 @@ Luego, se calcula la cantidad media de horas dedicacadas a tareas no remuneradas
 
 ```{r}
 
-
 horas_no_pago %>% 
   group_by(sexo) %>% 
+  filter(hs_no_pago>0)|>
   summarise(promedio = mean(hs_no_pago)) %>% 
   knitr::kable(caption = "Promedio de horas no remuneradas para cada sexo:", col.names = c("Sexo", "Promedio de horas"))
 
@@ -246,6 +250,7 @@ Gráfico las horas medias de trabajo no pago por genero.
 
 horas_no_pago|>
   group_by(sexo)|>
+  filter(hs_no_pago>0)|>
   summarise(hs_no_pago = mean(hs_no_pago)) %>% 
   ggplot(aes(sexo, hs_no_pago)) + 
   geom_col(aes(fill = sexo))+ 
@@ -256,7 +261,8 @@ calculo el desvio estandar.
 
 ```{r}
 horas_no_pago %>% 
-  group_by(sexo) %>% 
+  group_by(sexo) %>%
+  filter(hs_no_pago>0)|>
   summarise(desvio = sd(hs_no_pago)) %>% 
   knitr::kable(caption = "Desvio de horas no remuneradas para cada sexo:", col.names = c("Sexo", "Promedio de horas"))
 
@@ -299,6 +305,7 @@ Se observa como se distribuyen las horas de trabajo según la condicion laboral.
 ```{r}
 uso_tiempo %>% 
   group_by(estado_ocupacional) %>% 
+  filter(trabajo_pago2>0)|>
   summarise(horas_L_pago = mean(trabajo_pago2, na.rm = TRUE))|>
   
 knitr::kable(caption = "Promedio de horas de trabajo remuneradas según estado ocupacional :", col.names = c("Estado ocupacional", "Promedio de horas"))
@@ -309,6 +316,7 @@ knitr::kable(caption = "Promedio de horas de trabajo remuneradas según estado o
 ```{r}
   horas_no_pago|>  
       group_by(estado_ocupacional) %>% 
+  filter(hs_no_pago>0)|>
             summarise(hs_no_pago_media =(mean(hs_no_pago, na.rm=TRUE))) |>
   
   knitr::kable(caption = "Promedio de horas de trabajo no remunerado según estado ocupacional:", col.names = c("Estado ocupacional", "Promedio de horas"))
@@ -326,7 +334,7 @@ A continuación se realiza el mismo análisis desagregando por genero/sexo.
 
 ```{r}
 horas_no_pago|> 
-  filter(sexo=="Mujer")|>
+  filter(sexo=="Mujer", hs_no_pago>0)|>
       group_by(estado_ocupacional) %>% 
             summarise(horas_no_pago_media =(mean(hs_no_pago, na.rm=TRUE)))|>
   knitr::kable(caption = "Promedio de horas de trabajo no remunerado en las mujeres según estado ocupacional:", col.names = c("Estado ocupacional", "Promedio de horas no remuneradas"))
@@ -334,7 +342,7 @@ horas_no_pago|>
 
 ```{r}
 horas_no_pago|> 
-  filter(sexo=="Varon")|>
+  filter(sexo=="Varon", hs_no_pago>0)|>
       group_by(estado_ocupacional) %>% 
             summarise(horas_no_pago_media =(mean(hs_no_pago, na.rm=TRUE)))|>
   knitr::kable(caption = "Promedio de horas de trabajo no remunerado en los hombre según estado ocupacional:", col.names = c("Estado ocupacional", "Promedio de horas no remuneradas"))
@@ -346,6 +354,7 @@ horas_no_pago|>
 
 horas_no_pago|>
   group_by(sexo, estado_ocupacional)|>
+  filter(hs_no_pago>0)|>
   summarise(hs_no_pago = mean(hs_no_pago)) %>% 
   ggplot(aes(estado_ocupacional, hs_no_pago)) + 
   geom_col(position = "dodge", aes(fill = sexo)) 
