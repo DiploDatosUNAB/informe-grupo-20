@@ -1,5 +1,5 @@
 ---
-title: "TP2"
+title: "TP FINAL"
 output:
      html_document:
        code_folding: hide
@@ -92,7 +92,7 @@ rango_trabajo_pago <- range (uso_tiempo$trabajo_pago2, na.rm = TRUE)
 ```
  
 
-La variable trabajo pago, que indica la cantidad de horas diarias dedicadas a tareas remuneradas toma valores en  `r rango_trabajo_pago [1]` y `r rango_trabajo_pago [2]`.
+La variable trabajo pago, que indica la cantidad de horas diarias dedicadas a tareas remuneradas (de mercado). Toma valores en  `r rango_trabajo_pago [1]` y `r rango_trabajo_pago [2]`, se encuentra expresado en horas y minutos.
 
 Rango para trabajo doméstico no pago.
 ```{r}
@@ -101,7 +101,7 @@ Rango_domestico_no_pago <- range(uso_tiempo$trabajo_domestico_no_pago2)
 
 ```
 
-La variable tareas domésticas no pagas, que indica la cantidad de horas diarias dedicadas a tareas en el hogar no remuneradas, toma valores entre  `r Rango_domestico_no_pago [1]` y `r Rango_domestico_no_pago [2]`.
+La variable tareas domésticas no pagas, que indica la cantidad de horas diarias dedicadas a tareas en el hogar no remuneradas, toma valores entre  `r Rango_domestico_no_pago [1]` y `r Rango_domestico_no_pago [2]` horas.
 
 
 ```{r}
@@ -109,7 +109,7 @@ rango_voluntariado <- range(uso_tiempo$voluntariados2)
 
 ```
 
-La variable voluntariado, que indica la cantidad de horas diarias dedicadas a tareas de carácter voluntario, toma valores entre  `r rango_voluntariado [1]` y `r rango_voluntariado [2]`.
+La variable voluntariado, que indica la cantidad de horas diarias dedicadas a servicios a la comunidad y ayudas no pagas, toma valores entre  `r rango_voluntariado [1]` y `r rango_voluntariado [2]`.
 
 
 Rango para tareas de cuidados
@@ -118,7 +118,7 @@ Rango para tareas de cuidados
 rango_cuidados <- range(uso_tiempo$tareas_cuidados2)
 ```
 
-La variable cuidados, que indica la cantidad de horas diarias dedicadas a tareas de cuidados de familiares  toma valores entre  `r rango_cuidados [1]` y `r rango_cuidados [2]`.
+La variable cuidados, que indica la cantidad de horas diarias no remuneradas dedicadas a tareas de cuidados a miembros de hogar. Toma valores entre  `r rango_cuidados [1]` y `r rango_cuidados [2]`.
 
 Rango para tareas uso de aplicaciones
 
@@ -127,7 +127,7 @@ rango_aplicaciones <- range(uso_tiempo$aplicaciones2)
 
 ```
 
-La variable aplicaciones, que denota la cantidad de horas diarias dedicadas al uso de aplicaciones tecnológicas,  toma valores entre  `r rango_aplicaciones [1]` y `r rango_aplicaciones [2]`. 
+La variable aplicaciones, que denota la cantidad de horas diarias dedicadas al uso de aplicaciones tecnológicas y medios de comunicación,  toma valores entre  `r rango_aplicaciones [1]` y `r rango_aplicaciones [2]`. 
 
 
 Rango para tareas tiempo de recreación 
@@ -137,7 +137,7 @@ rango_recreacion <- range(uso_tiempo$recreacion2)
 
 ```
 
-La variable recreación, expresa la cantidad de horas diarias dedicadas al ocio y recreación,  toma valores entre  `r rango_recreacion [1]` y `r rango_recreacion [2]`. 
+La variable recreación, expresa la cantidad de horas diarias dedicadas al ocio, convivencia y actividades recreativa,  toma valores entre  `r rango_recreacion [1]` y `r rango_recreacion [2]`. 
 
 
 Se observa el limite superior máximo se registra en lo referido a tareas remuneradas, el resto de las tareas presentan limites similares.
@@ -192,17 +192,17 @@ uso_tiempo|>
 
 1. Se observa una menor participación en el grupo etarios de 14-24 y de 40- 49, en relación con los restantes grupos.
 
-2. El 57% de las respuestas provienen del genero femenino.
+2. El 58% de las respuestas provienen del genero femenino.
 
 3. No es posible utilizar la variable quintil de ingreso.
 
-4. EL 37% de los encuestas posse superior completo, 42% superior incompleto y un 21% secundario incompleto.
+4. EL 37% de los encuestas posee estudios de nivel superior completo, 42% superior secundario completo y un 21% secundario incompleto.
 
 
  
 ## Hipótesis 1: Las mujeres dedican mayor cantidad de horas al trabajo no remunerado que los hombres.
 
-Para ver ello, se calcula la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Lo mismo para aquella actividades no remuneradas realizadas. Para el segundo grupo se considerarón las siguientes variables:  trabajo doméstico no remunerado, cuidados y voluntariado.
+Para ver ello se calcula, en primer lugar, la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Luego, se calcula lo mismo para aquella actividades no remuneradas. Para este segundo grupo se considerarón las siguientes variables:  trabajo doméstico no remunerado, cuidados y voluntariado.De este modo, se obtienen valores promedio de trabajo remunerado y no remunerado por sexo.
 
 
 
@@ -214,7 +214,7 @@ summarise(mean(trabajo_pago2,na.rm=TRUE),mean(trabajo_domestico_no_pago2, na.rm=
    
 ```
  
-Se observa que la mujeres en general dedican en promedio mayor cantidad de horas a las actividades no remuneradas que los hombres. La mayor brecha se aprecia en el trabajo doméstico y la menor en voluntariados.
+Se observa que las mujeres en general dedican en promedio mayor cantidad de horas a las actividades no remuneradas que los hombres. La mayor brecha se aprecia en el trabajo doméstico y la menor en voluntariados.
  
 Para obtener una medida resumen se calcula una variable (hs_no_pago) que agrupa las actividades no remuneradas listadas previamente( sin incluir cuidado personal, recreacion y estudio). 
 
@@ -270,9 +270,9 @@ horas_no_pago %>%
 
 ### Conclusión hipótesis 1.
 
-En promedio las mujeres realizan más horas de trabajo no remunerado que los hombres. Es decir, mientras que los hombres en el dia de referencia realizaron poco más de 3 horas de tareas no remuneradas,las mujeres hicieron más de 5 horas promedio.
+En promedio las mujeres realizan más horas de trabajo no remunerado que los hombres. Es decir, mientras que los hombres en el dia de referencia realizaron poco menos de 3 horas de tareas no remuneradas,las mujeres hicieron cerca de 5 horas promedio.
 
-Es importante destacar que el desvio es elevado, en el caso de las mujeres si bien en promedio realizan tareas no remuneradas 5 horas en el día de referencia existe un desvio de más/menos 4 horas diarias. Para los hombres dicho desvio es cercano a 3 horas.
+Es importante destacar que el desvio es elevado, en el caso de las mujeres si bien en promedio realizan tareas no remuneradas por 4,5 horas en el día de referencia existe un desvio de más/menos 3,5 horas diarias. Para los hombres dicho desvio es de 3 horas.
 
 
 ## Hipótesis 2. La condición laboral se relaciona con la cantidad de horas que un individuo puede dedicar a tareas no remuneradas. 
@@ -326,10 +326,10 @@ knitr::kable(caption = "Promedio de horas de trabajo remuneradas según estado o
 
 La mayor cantidad promedio de trabajo remunerado se registra logicamente entre los ocupados.
 El trabajo doméstico y las tareas de cuidados son mayores entre los inactivos y los desocupados.
-En promedio una persona desocupaba destina poco más de 6 horas a tareas no remuneradas, cifra muy cercana a la que un ocupado destina a horas de trabajo remuneradas. De todos modos, la cantidad de horas no remuneradas que en promedio realiza una persona ocupada es cerca de 4 horas durante el día de referencia.
+En promedio una persona desocupada destina poco más de 5 horas a tareas no remuneradas, mientras que un inactivo efectua también casi 5 horas de tareas no remuneradas. Cuando el individuo esta ocupado, las tareas no remuneradas le llevan 3 horas diarias, y trabajo poca más de 8 horas en promedio.
 
 
-A continuación se realiza el mismo análisis desagregando por genero/sexo.
+A continuación se realiza el mismo análisis desagregando por género/sexo.
 
 
 ```{r}
@@ -369,11 +369,11 @@ horas_no_pago|>
 
 Los ocupados realizan en promedio menos horas de trabajo no remunerado que los desocupados y que los inactivos.
 
-Cuando este análisis se lo discrimina por género, se observa que las mujeres ocupadas realizan más actividades no remuneradas que los hombres en igual condición laboral,cerca de 5 horas versus poco menos de 3 respectivamente.
+Cuando este análisis se lo discrimina por género, se observa que las mujeres ocupadas realizan más actividades no remuneradas que los hombres en igual condición laboral,más de 4 horas versus poco menos de 3 respectivamente.Con independencia de la condición laborar, se reafirma la hipótesis 1, que las mujeres realizan más actividades no remuneradas.
 
 
 
-## Hipotesis 3: Las personas más jovenes realizan menos actividades no remuneradas y más recreativas o de estudio.
+## Hipotesis 3: Las personas más jóvenes realizan menos actividades no remuneradas y más recreativas o de estudio.
  
 A continuación se calcula la media de tiempo dedicado a actividades de recreación, estudio/educación o uso de aplicaciones según edad.
 
@@ -381,7 +381,7 @@ A continuación se calcula la media de tiempo dedicado a actividades de recreaci
 horas_no_pago %>% 
   group_by(rango_etario) %>% 
   summarise(media_no_pago = mean(hs_no_pago, na.rm = TRUE), horas_estudio = mean(estudio_educacion2),horas_recreacion = mean(recreacion2, na.rm = TRUE),horas_aplicaciones = mean(aplicaciones2), horas_pago = mean(trabajo_pago2)) %>%
-  knitr::kable(caption = "Promedio de horas de recreación o estudio según edad ", col.names = c("Edad agrupada ", "Horas de trabajo no remunerado", "Horas de estudio", "Horas de recreación", "Horas en aplicaciones","Horas de trabajo remunerado"))
+  knitr::kable(caption = "Promedio de horas de dedicadas a actividades remuneradas y no remuneradas según edad ", col.names = c("Edad agrupada ", "Horas de trabajo no remunerado", "Horas de estudio", "Horas de recreación", "Horas en aplicaciones","Horas de trabajo remunerado"))
 
 ```
 
@@ -396,7 +396,8 @@ En el siguiente gráfico, se observa el predominio de horas dedicadas a recreaci
 
 uso_tiempo|>
   group_by(rango_etario)|>
-  summarise(media_recreacion = mean(recreacion2, na.rm=TRUE))|>
+
+    summarise(media_recreacion = mean(recreacion2, na.rm=TRUE))|>
   
   ggplot(aes(rango_etario, media_recreacion)) + 
   geom_col(aes(fill = rango_etario))+ 
