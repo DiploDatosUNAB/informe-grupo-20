@@ -5,7 +5,7 @@ output:
        code_folding: hide
        toc: true
          
-date: "2023-06-01"
+date: "2023-06-21"
 ---
 
 ```{r setup, include=FALSE}
@@ -168,7 +168,7 @@ Gráfico la proporción de hombres y mujeres en la muestra.
 #| fig.cap = "Elaboración propia en base a datos de la Encuesta sobre Uso del Tiempo, Dirección de Estadisticas y Censos, GCBS"
 
 PieChart(sexo, data = uso_tiempo, hole = 0, values = "%",     
-         fill = c("blue", "violet","orange"), main = "Distribución porcentual según sexo") 
+         fill = c("blue", "violet"), main = "Distribución porcentual según sexo") 
 
 
 
@@ -202,7 +202,7 @@ uso_tiempo|>
  
 ## Hipótesis 1: Las mujeres dedican mayor cantidad de horas al trabajo no remunerado que los hombres.
 
-Para ver ello se calcula, en primer lugar, la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Luego, se calcula lo mismo para aquella actividades no remuneradas. Para este segundo grupo se considerarón las siguientes variables:  trabajo doméstico no remunerado, cuidados y voluntariado.De este modo, se obtienen valores promedio de trabajo remunerado y no remunerado por sexo.
+Para ver ello se calcula, en primer lugar, la cantidad media de tiempo dedicada al trabajo pago en el día de referencia según sexo. Luego, se calcula lo mismo para aquella actividades no remuneradas. Para este segundo grupo se consideraron las siguientes variables:  trabajo doméstico no remunerado, cuidados y voluntariado.De este modo, se obtienen valores promedio de trabajo remunerado y no remunerado por sexo.
 
 
 
@@ -270,9 +270,9 @@ horas_no_pago %>%
 
 ### Conclusión hipótesis 1.
 
-En promedio las mujeres realizan más horas de trabajo no remunerado que los hombres. Es decir, mientras que los hombres en el dia de referencia realizaron poco menos de 3 horas de tareas no remuneradas,las mujeres hicieron cerca de 5 horas promedio.
+En promedio las mujeres realizan más horas de trabajo no remunerado que los hombres. Es decir, mientras que los hombres en el día de referencia realizaron poco menos de 3 horas de tareas no remuneradas,las mujeres hicieron cerca de 5 horas promedio.
 
-Es importante destacar que el desvio es elevado, en el caso de las mujeres si bien en promedio realizan tareas no remuneradas por 4,5 horas en el día de referencia existe un desvio de más/menos 3,5 horas diarias. Para los hombres dicho desvio es de 3 horas.
+Es importante destacar que el desvió es elevado, en el caso de las mujeres si bien en promedio realizan tareas no remuneradas por 4,5 horas en el día de referencia existe un desvió de más/menos 3,5 horas diarias. Para los hombres dicho desvió es de 3 horas.
 
 
 ## Hipótesis 2. La condición laboral se relaciona con la cantidad de horas que un individuo puede dedicar a tareas no remuneradas. 
